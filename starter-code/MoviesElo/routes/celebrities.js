@@ -5,7 +5,8 @@ const router = express.Router();
  router.get('/', (req,res,next) => {
    Celebrity.find({} , (err, celebrities) => {
    if (err) {return next(err)}
-   res.render('celebrities/index', { celebrities:celebrities
+   res.render('celebrities/index', {
+     celebrities: celebrities
    });
  });
 });
@@ -20,20 +21,24 @@ router.post('/', (req, res, next) => {
     occupation: req.body.occupation,
     catchPhrase: req.body.catchPhrase
   });
-  celebrity.save((err,drone) => {
-  if (err){ res.redirect('celebrities/new'); }
-    res.redirect('index');
+  celebrity.save((err, celebrity) => {
+  if (err){ return res.redirect('celebrities/new'); }
+    res.redirect('/celebrities');
       });
 });
-
+router.post('/:id/delete',(req,res,next) => {
+  Celebrity.findByIdAndRemove(req.params.id, (err, celebrity) =>
+{if (err) {return next(err)}
+  res.redirect('/celebrities');
+});
+});
 
 
 router.get('/:id', (req,res,next)=> {
   const celebrityId=req.params.id;
-
-  Celebrity.findById(celebrityId, (err, celebrity) => {
-    if(err) {return next (err)}
-    res.render('celebrities/show', {celebrity:celebrity
+Celebrity.findById(celebrityId, (err, celebrity) => {
+    if(err) {return next(err)}
+     return res.render('celebrities/show', {celebrity:celebrity
     });
   });
 
